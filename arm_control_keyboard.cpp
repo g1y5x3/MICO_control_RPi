@@ -10,7 +10,6 @@
  *  EMG, etc. It is used for an illustration for control.
  */
 
-
 /*  This file uses libkindrv.
  *
  *  libkindrv is free software: you can redistribute it and/or modify
@@ -40,7 +39,10 @@ int gesture = 0;
 int x_dir = -1;
 int y_dir = -1;
 int z_dir = -1;
+int finger_dir = -1;
+int moving_status = 0;
 
+// ========== Control Function for MICO ==========
 int goto_retract(JacoArm *arm) {
   // this can only be achieved from HOME position. Otherwise the arm
   // will move to HOME. You'll probably need to uncomment the gripper movements
@@ -162,7 +164,7 @@ void *RobotControl(void *t) {
 
 int main() {
     
-    printf("Using keyboard to controlling the arm \n");
+    printf("Using keyboard to controlling the arm...\n");
 
     // ========== Initialize the Robot ==========
     // explicitly initialize a libusb context; optional
@@ -218,6 +220,31 @@ int main() {
     while( gesture != 5 ) { 
         printf("Control Command:");
         scanf("%d", &gesture);
+
+        switch ( gesture ) {
+            case 1:
+                x_dir = x_dir * -1;
+                moving_status = 1;                
+                break;
+            case 2:
+                y_dir = y_dir * -1;
+                moving_status = 1;
+                break;
+            case 3:
+                z_dir = z_dir * -1;
+                moving_status = 1;
+                break;
+            case 4:
+                if( moving_status == 1 )
+                    moving_status = 0;
+                else {
+                    moving_statu = 0;
+                    finger_dir = finger_dir * -1;
+                }
+                break;
+            default:
+                break;
+        }
     }
 //  printf("Opening gripper...");
 //  // set control type to angular
