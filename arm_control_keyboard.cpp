@@ -139,24 +139,45 @@ int goto_home(JacoArm *arm) {
 
 // ========== Thread for Controlling the Robot ==========
 void *RobotControl(void *t) {
-    int i = 0; 
+    jaco_position_t pos;        // store the current position of the jaco arm
+    arm->set_control_cart();
 
-    while(i < 100) {
-        //printf("gesture = %d\n", gesture);
-        if( gesture == 1 ) {
-            // set control type to cartesian
-            arm->set_control_cart();
-            jaco_position_t pos = arm->get_cart_pos();
-            printf("Moving forward...");
+    while(gesture != 5) {
+        pos = arm->get_cart_pos();
+
+        if((gesture == 1) && (x_dir == 1)) {        // moving forward or backward
+//            arm->set_control_cart();
             pos.position[0] = pos.position[0] + 0.01;
             arm->set_target_cart(pos.position[0], pos.position[1], pos.position[2],
          		                 pos.rotation[0], pos.rotation[1], pos.rotation[2],
          		                 pos.finger_position[0], pos.finger_position[1], pos.finger_position[2]);
-            usleep(1000*20);
-            printf("DONE\n");
-
-            i++;
+            usleep(1000*50);
         }     
+        else if((gesture == 1) && (x_dir == -1)) {
+//            arm->set_control_cart();
+            pos.position[0] = pos.position[0] - 0.01;
+            arm->set_target_cart(pos.position[0], pos.position[1], pos.position[2],
+         		                 pos.rotation[0], pos.rotation[1], pos.rotation[2],
+         		                 pos.finger_position[0], pos.finger_position[1], pos.finger_position[2]);
+            usleep(1000*50);
+        }     
+        if((gesture == 2) && (y_dir == 1)) {        // moving forward or backward
+//            arm->set_control_cart();
+            pos.position[1] = pos.position[1] + 0.01;
+            arm->set_target_cart(pos.position[0], pos.position[1], pos.position[2],
+         		                 pos.rotation[0], pos.rotation[1], pos.rotation[2],
+         		                 pos.finger_position[0], pos.finger_position[1], pos.finger_position[2]);
+            usleep(1000*50);
+        }     
+        else if((gesture == 2) && (y_dir == -1)) {
+//            arm->set_control_cart();
+            pos.position[1] = pos.position[1] - 0.01;
+            arm->set_target_cart(pos.position[0], pos.position[1], pos.position[2],
+         		                 pos.rotation[0], pos.rotation[1], pos.rotation[2],
+         		                 pos.finger_position[0], pos.finger_position[1], pos.finger_position[2]);
+            usleep(1000*50);
+        }     
+ 
     }
     printf("Movement finished!\n");
     pthread_exit(NULL);
@@ -238,7 +259,7 @@ int main() {
                 if( moving_status == 1 )
                     moving_status = 0;
                 else {
-                    moving_statu = 0;
+                    moving_status = 0;
                     finger_dir = finger_dir * -1;
                 }
                 break;
